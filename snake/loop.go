@@ -1,12 +1,13 @@
 package snake
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/gdamore/tcell/v3"
 )
 
-func (a *App) loop() {
+func (a *App) loop(ctx context.Context) {
 	redraw(a.screen)
 	slog.Info("entering main loop")
 
@@ -16,8 +17,7 @@ func (a *App) loop() {
 			// TODO: update game state
 			redraw(a.screen)
 
-		case sig := <-a.done:
-			slog.Info("shutdown", "reason", sig.String())
+		case <-a.quitter.Done:
 			return
 
 		case ev := <-a.screen.EventQ():

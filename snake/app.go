@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/gdamore/tcell/v3"
@@ -15,9 +13,8 @@ import (
 type App struct {
 	screen  tcell.Screen
 	logFile *os.File
-	cancel  context.CancelFunc
 	ticker  *time.Ticker
-	done    chan os.Signal
+	quitter *Quitter
 }
 
 func Setup() (*App, error) {
@@ -28,26 +25,28 @@ func Setup() (*App, error) {
 
 	screen, err := initScreen()
 	if err != nil {
+		defer func() {
+			err := logFile.Close()
+			if err != nil {
+				slog.Error("failed to close log file", "err", err)
+			}
+		}()
 		return nil, fmt.Errorf("screen: %w", err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
 	ticker := time.NewTicker(150 * time.Millisecond)
-	done := make(chan os.Signal, 1)
-
-	startSignalHandler(ctx, done)
 
 	return &App{
 		screen:  screen,
 		logFile: logFile,
-		cancel:  cancel,
 		ticker:  ticker,
-		done:    done,
+		quitter: NewQuitter(),
 	}, nil
 }
 
 func (a *App) Run() {
-	defer a.cancel()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	defer a.ticker.Stop()
 	defer a.screen.Fini()
 	defer func() {
@@ -56,7 +55,7 @@ func (a *App) Run() {
 		}
 	}()
 
-	a.loop()
+	a.loop(ctx)
 }
 
 func initLogging() (*os.File, error) {
@@ -87,21 +86,6 @@ func initScreen() (tcell.Screen, error) {
 	screen.SetStyle(tcell.StyleDefault)
 	screen.Clear()
 	return screen, nil
-}
-
-// --- Signal handler -------------------------------------------------------
-
-func startSignalHandler(ctx context.Context, done chan<- os.Signal) {
-	go func() {
-		sigCh := make(chan os.Signal, 1)
-		signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-		select {
-		case sig := <-sigCh:
-			slog.Info("received signal", "signal", sig)
-			done <- sig
-		case <-ctx.Done():
-		}
-	}()
 }
 
 func drawHint(screen tcell.Screen, msg string) {
