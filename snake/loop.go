@@ -2,27 +2,25 @@ package snake
 
 import (
 	"log/slog"
-	"os"
-	"time"
 
 	"github.com/gdamore/tcell/v3"
 )
 
-func loop(screen tcell.Screen, ticker *time.Ticker, done <-chan os.Signal) {
-	redraw(screen)
+func (a *App) loop() {
+	redraw(a.screen)
 	slog.Info("entering main loop")
 
 	for {
 		select {
-		case <-ticker.C:
+		case <-a.ticker.C:
 			// TODO: update game state
-			redraw(screen)
+			redraw(a.screen)
 
-		case sig := <-done:
+		case sig := <-a.done:
 			slog.Info("shutdown", "reason", sig.String())
 			return
 
-		case ev := <-screen.EventQ():
+		case ev := <-a.screen.EventQ():
 			switch ev := ev.(type) {
 			case *tcell.EventKey:
 				if ev.Str() == "q" {
@@ -32,8 +30,8 @@ func loop(screen tcell.Screen, ticker *time.Ticker, done <-chan os.Signal) {
 				// TODO: handle direction keys
 
 			case *tcell.EventResize:
-				screen.Sync()
-				redraw(screen)
+				a.screen.Sync()
+				redraw(a.screen)
 			}
 		}
 	}

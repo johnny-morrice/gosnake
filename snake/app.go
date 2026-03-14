@@ -56,7 +56,7 @@ func (a *App) Run() {
 		}
 	}()
 
-	loop(a.screen, a.ticker, a.done)
+	a.loop()
 }
 
 func initLogging() (*os.File, error) {
