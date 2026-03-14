@@ -36,7 +36,7 @@ func Setup() (*App, error) {
 		return nil, fmt.Errorf("screen: %w", err)
 	}
 
-	ticker := time.NewTicker(150 * time.Millisecond)
+	ticker := time.NewTicker(gameTick)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	// TODO: pass a real handler here
@@ -109,3 +109,5 @@ func redraw(screen tcell.Screen) {
 	// TODO: draw game state
 	screen.Show()
 }
+
+const gameTick = 1 * time.Second

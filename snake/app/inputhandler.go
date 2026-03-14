@@ -12,7 +12,6 @@ type KeyHandler interface {
 	OnPressDown()
 	OnPressLeft()
 	OnPressRight()
-	OnPressQuit()
 }
 
 type InputHandler struct {
