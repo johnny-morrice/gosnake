@@ -18,16 +18,13 @@ func (a *App) loop(ctx context.Context) {
 			redraw(a.screen)
 
 		case <-a.quitter.Done:
+			slog.Info("main loop stopping", "reason", "quitter channel triggered")
 			return
 
 		case ev := <-a.screen.EventQ():
 			switch ev := ev.(type) {
 			case *tcell.EventKey:
-				if ev.Str() == "q" {
-					slog.Info("shutdown", "reason", "quit key")
-					return
-				}
-				// TODO: handle direction keys
+				a.inputHandler.HandleEventKey(ctx, ev)
 
 			case *tcell.EventResize:
 				a.screen.Sync()

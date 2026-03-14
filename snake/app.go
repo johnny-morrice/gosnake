@@ -11,10 +11,11 @@ import (
 )
 
 type App struct {
-	screen  tcell.Screen
-	logFile *os.File
-	ticker  *time.Ticker
-	quitter *Quitter
+	screen       tcell.Screen
+	logFile      *os.File
+	ticker       *time.Ticker
+	quitter      *Quitter
+	inputHandler *InputHandler
 }
 
 func Setup() (*App, error) {
@@ -36,11 +37,15 @@ func Setup() (*App, error) {
 
 	ticker := time.NewTicker(150 * time.Millisecond)
 
+	quitter := NewQuitter()
+	inputHandler := MakeInputHandler(quitter)
+
 	return &App{
-		screen:  screen,
-		logFile: logFile,
-		ticker:  ticker,
-		quitter: NewQuitter(),
+		screen:       screen,
+		logFile:      logFile,
+		ticker:       ticker,
+		quitter:      quitter,
+		inputHandler: inputHandler,
 	}, nil
 }
 
