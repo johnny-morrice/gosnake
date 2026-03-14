@@ -1,4 +1,4 @@
-package snake
+package app
 
 import (
 	"context"
@@ -14,7 +14,8 @@ type App struct {
 	screen       tcell.Screen
 	logFile      *os.File
 	ticker       *time.Ticker
-	quitter      *Quitter
+	rootCtx      context.Context
+	shutdown     context.CancelFunc
 	inputHandler *InputHandler
 }
 
@@ -37,21 +38,22 @@ func Setup() (*App, error) {
 
 	ticker := time.NewTicker(150 * time.Millisecond)
 
-	quitter := NewQuitter()
-	inputHandler := MakeInputHandler(quitter)
+	ctx, cancel := context.WithCancel(context.Background())
+	// TODO: pass a real handler here
+	inputHandler := MakeInputHandler(cancel, nil)
 
 	return &App{
+		rootCtx:      ctx,
+		shutdown:     cancel,
 		screen:       screen,
 		logFile:      logFile,
 		ticker:       ticker,
-		quitter:      quitter,
 		inputHandler: inputHandler,
 	}, nil
 }
 
 func (a *App) Run() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	defer a.shutdown()
 	defer a.ticker.Stop()
 	defer a.screen.Fini()
 	defer func() {
@@ -60,7 +62,7 @@ func (a *App) Run() {
 		}
 	}()
 
-	a.loop(ctx)
+	a.loop()
 }
 
 func initLogging() (*os.File, error) {

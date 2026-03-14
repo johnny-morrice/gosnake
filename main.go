@@ -4,11 +4,11 @@ import (
 	"log"
 	"os"
 
-	"github.com/johnny-morrice/gosnake/snake"
+	"github.com/johnny-morrice/gosnake/snake/app"
 )
 
 func main() {
-	app, err := snake.Setup()
+	app, err := app.Setup()
 	if err != nil {
 		log.Printf("initialization failed: %s", err)
 		os.Exit(1)
