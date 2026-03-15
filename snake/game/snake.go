@@ -15,6 +15,7 @@ type Snake struct {
 	Geometry       Geometry
 	ticksSinceMove int
 	speed          int
+	crashed        bool
 }
 
 func NewSnake(initialPosition Point, initialDirection Delta, geometry Geometry) *Snake {
@@ -41,14 +42,32 @@ func (s *Snake) IsCollide(point Point) bool {
 	return slices.Contains(s.Deque, point)
 }
 
+func (s *Snake) ChangeDirection(newDirection Delta) {
+	// Don't allow reversing direction.
+	if s.Direction.DX == -newDirection.DX && s.Direction.DY == -newDirection.DY {
+		return
+	}
+	s.Direction = newDirection
+}
+
 func (s *Snake) Tick() {
+	if s.crashed {
+		return
+	}
+
+	// Check if head collides with body.
+	head := s.Deque[0]
+	if s.IsCollide(s.Geometry.Add(head, s.Direction)) {
+		s.crashed = true
+		return
+	}
+
 	if s.ticksSinceMove < s.speed {
 		s.ticksSinceMove++
 		return
 	}
 	s.ticksSinceMove = 0
 
-	head := s.Deque[0]
 	newHead := s.Geometry.Add(head, s.Direction)
 	s.Deque.PushFront(newHead)
 

@@ -42,19 +42,19 @@ func New(width, height int) (*Game, error) {
 }
 
 func (g *Game) OnPressUp() {
-	g.snake.Direction = Delta{DX: 0, DY: -1}
+	g.snake.ChangeDirection(Delta{DX: 0, DY: -1})
 }
 
 func (g *Game) OnPressDown() {
-	g.snake.Direction = Delta{DX: 0, DY: 1}
+	g.snake.ChangeDirection(Delta{DX: 0, DY: 1})
 }
 
 func (g *Game) OnPressLeft() {
-	g.snake.Direction = Delta{DX: -1, DY: 0}
+	g.snake.ChangeDirection(Delta{DX: -1, DY: 0})
 }
 
 func (g *Game) OnPressRight() {
-	g.snake.Direction = Delta{DX: 1, DY: 0}
+	g.snake.ChangeDirection(Delta{DX: 1, DY: 0})
 }
 
 func (g *Game) Tick() {
