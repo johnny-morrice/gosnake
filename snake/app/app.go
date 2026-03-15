@@ -95,17 +95,8 @@ func initScreen() (tcell.Screen, error) {
 	return screen, nil
 }
 
-func drawHint(screen tcell.Screen, msg string) {
-	_, h := screen.Size()
-	style := tcell.StyleDefault.Foreground(tcell.ColorGray)
-	for i, ch := range msg {
-		screen.Put(i, h-1, string(ch), style)
-	}
-}
-
 func redraw(screen tcell.Screen) {
 	screen.Clear()
-	drawHint(screen, "q: quit")
 	// TODO: draw game state
 	screen.Show()
 }
