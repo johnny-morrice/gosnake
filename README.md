@@ -10,3 +10,7 @@ This is a clone of classic Nokia game snake for the terminal.
 go install .
 go run main.go
 ```
+
+## Screenshot
+
+![Screenshot](screenshot.png)
