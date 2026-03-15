@@ -7,10 +7,12 @@ import (
 )
 
 type Snake struct {
-	Deque     deque.Deque[Point]
-	Direction Delta
-	Food      int
-	Geometry  Geometry
+	Deque          deque.Deque[Point]
+	Direction      Delta
+	Food           int
+	Geometry       Geometry
+	ticksSinceMove int
+	speed          int
 }
 
 func NewSnake(initialPosition Point, initialDirection Delta, geometry Geometry) *Snake {
@@ -18,13 +20,21 @@ func NewSnake(initialPosition Point, initialDirection Delta, geometry Geometry) 
 	d.PushFront(initialPosition)
 
 	return &Snake{
-		Deque:     *d,
-		Direction: initialDirection,
-		Geometry:  geometry,
+		Deque:          *d,
+		Direction:      initialDirection,
+		Geometry:       geometry,
+		speed:          initialSpeed,
+		ticksSinceMove: 0,
 	}
 }
 
 func (s *Snake) Tick() {
+	if s.ticksSinceMove < s.speed {
+		s.ticksSinceMove++
+		return
+	}
+	s.ticksSinceMove = 0
+
 	head := s.Deque[0]
 	newHead := s.Geometry.Add(head, s.Direction)
 	s.Deque.PushFront(newHead)
@@ -59,3 +69,5 @@ func (s *Snake) Render() layer.Layer {
 		Tiles:  myTiles,
 	}
 }
+
+const initialSpeed = 10

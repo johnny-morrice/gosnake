@@ -103,4 +103,4 @@ func initScreen() (tcell.Screen, error) {
 	return screen, nil
 }
 
-const gameTick = 1 * time.Second
+const gameTick = 100 * time.Millisecond

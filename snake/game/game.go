@@ -8,6 +8,7 @@ import (
 )
 
 type Game struct {
+	speed    int
 	width    int
 	height   int
 	geometry Geometry
