@@ -7,21 +7,14 @@ import (
 	"github.com/gdamore/tcell/v3"
 )
 
-type KeyHandler interface {
-	OnPressUp()
-	OnPressDown()
-	OnPressLeft()
-	OnPressRight()
-}
-
 type InputHandler struct {
-	handler  KeyHandler
+	game     Game
 	shutdown context.CancelFunc
 }
 
-func MakeInputHandler(shutdown context.CancelFunc, handler KeyHandler) *InputHandler {
+func MakeInputHandler(shutdown context.CancelFunc, handler Game) *InputHandler {
 	return &InputHandler{
-		handler:  handler,
+		game:     handler,
 		shutdown: shutdown,
 	}
 }
@@ -29,13 +22,13 @@ func MakeInputHandler(shutdown context.CancelFunc, handler KeyHandler) *InputHan
 func (h *InputHandler) HandleEventKey(ev *tcell.EventKey) {
 	switch ev.Key() {
 	case tcell.KeyUp:
-		h.handler.OnPressUp()
+		h.game.OnPressUp()
 	case tcell.KeyDown:
-		h.handler.OnPressDown()
+		h.game.OnPressDown()
 	case tcell.KeyLeft:
-		h.handler.OnPressLeft()
+		h.game.OnPressLeft()
 	case tcell.KeyRight:
-		h.handler.OnPressRight()
+		h.game.OnPressRight()
 	default:
 		if ev.Str() == "q" {
 			slog.Info("shutdown", "reason", "quit key")

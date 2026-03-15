@@ -3,7 +3,7 @@ package game
 import (
 	"github.com/johnny-morrice/gosnake/snake/deque"
 	"github.com/johnny-morrice/gosnake/snake/layer"
-	"github.com/johnny-morrice/gosnake/snake/tile"
+	"github.com/johnny-morrice/gosnake/snake/tiles"
 )
 
 type Snake struct {
@@ -37,17 +37,17 @@ func (s *Snake) Tick() {
 }
 
 func (s *Snake) Render() layer.Layer {
-	tiles := make([]layer.Tile, len(s.Deque))
+	myTiles := make([]layer.Tile, len(s.Deque))
 	maxX := 0
 	maxY := 0
 	for i, point := range s.Deque {
 		maxX = max(maxX, point.X)
 		maxY = max(maxY, point.Y)
-		tileType := tile.SnakeBody
+		tileType := tiles.SnakeBody
 		if i == 0 {
-			tileType = tile.SnakeHead
+			tileType = tiles.SnakeHead
 		}
-		tiles[i] = layer.Tile{
+		myTiles[i] = layer.Tile{
 			X:    point.X,
 			Y:    point.Y,
 			Type: tileType,
@@ -56,6 +56,6 @@ func (s *Snake) Render() layer.Layer {
 	return layer.Layer{
 		Width:  maxX + 1,
 		Height: maxY + 1,
-		Tiles:  tiles,
+		Tiles:  myTiles,
 	}
 }

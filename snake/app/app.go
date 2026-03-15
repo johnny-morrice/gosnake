@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v3"
+	"github.com/johnny-morrice/gosnake/snake/game"
 )
 
 type App struct {
@@ -17,6 +18,7 @@ type App struct {
 	rootCtx      context.Context
 	shutdown     context.CancelFunc
 	inputHandler *InputHandler
+	game         Game
 }
 
 func Setup() (*App, error) {
@@ -36,6 +38,12 @@ func Setup() (*App, error) {
 		return nil, fmt.Errorf("screen: %w", err)
 	}
 
+	const width, height = 22, 23
+	game, err := game.New(width, height)
+	if err != nil {
+		return nil, fmt.Errorf("game initialization failed: %s", err)
+	}
+
 	ticker := time.NewTicker(gameTick)
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -49,6 +57,7 @@ func Setup() (*App, error) {
 		logFile:      logFile,
 		ticker:       ticker,
 		inputHandler: inputHandler,
+		game:         game,
 	}, nil
 }
 
@@ -93,12 +102,6 @@ func initScreen() (tcell.Screen, error) {
 	screen.SetStyle(tcell.StyleDefault)
 	screen.Clear()
 	return screen, nil
-}
-
-func redraw(screen tcell.Screen) {
-	screen.Clear()
-	// TODO: draw game state
-	screen.Show()
 }
 
 const gameTick = 1 * time.Second

@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/johnny-morrice/gosnake/snake/layer"
-	"github.com/johnny-morrice/gosnake/snake/tile"
+	"github.com/johnny-morrice/gosnake/snake/tiles"
 )
 
 type Game struct {
@@ -58,9 +58,12 @@ func (g *Game) Tick() {
 }
 
 func (g *Game) Render() layer.Layers {
+	snakeLayer := g.snake.Render()
+	snakeLayer.OffsetX = 1
+	snakeLayer.OffsetY = 1
 	return layer.Layers{
 		g.backgroundLayer(),
-		g.snake.Render(),
+		snakeLayer,
 	}
 }
 
@@ -68,21 +71,21 @@ func (g *Game) backgroundLayer() layer.Layer {
 	// Lines for the game border
 	// "q for quit" hint at the bottom
 	const msg = "q: quit"
-	tiles := make([]layer.Tile, 0, (g.width*2)+(g.height*2)+len(msg))
+	myTiles := make([]layer.Tile, 0, (g.width*2)+(g.height*2)+len(msg))
 	for x := range g.width {
-		tiles = append(tiles, layer.Tile{X: x, Y: 0, Type: tile.HorizontalLine})
-		tiles = append(tiles, layer.Tile{X: x, Y: g.height - 2, Type: tile.HorizontalLine})
+		myTiles = append(myTiles, layer.Tile{X: x, Y: 0, Type: tiles.HorizontalLine})
+		myTiles = append(myTiles, layer.Tile{X: x, Y: g.height - 2, Type: tiles.HorizontalLine})
 	}
 	for y := range g.height {
-		tiles = append(tiles, layer.Tile{X: 0, Y: y, Type: tile.VerticalLine})
-		tiles = append(tiles, layer.Tile{X: g.width - 2, Y: y, Type: tile.VerticalLine})
+		myTiles = append(myTiles, layer.Tile{X: 0, Y: y, Type: tiles.VerticalLine})
+		myTiles = append(myTiles, layer.Tile{X: g.width - 2, Y: y, Type: tiles.VerticalLine})
 	}
 	for i, ch := range msg {
-		tiles = append(tiles, layer.Tile{X: i, Y: g.height - 1, Type: tile.Character, Character: ch})
+		myTiles = append(myTiles, layer.Tile{X: i, Y: g.height - 1, Type: tiles.Character, Rune: ch})
 	}
 	return layer.Layer{
 		Width:  g.width,
 		Height: g.height,
-		Tiles:  tiles,
+		Tiles:  myTiles,
 	}
 }

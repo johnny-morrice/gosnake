@@ -7,14 +7,14 @@ import (
 )
 
 func (a *App) loop() {
-	redraw(a.screen)
+	a.redraw()
 	slog.Info("entering main loop")
 
 	for {
 		select {
 		case <-a.ticker.C:
-			// TODO: update game state
-			redraw(a.screen)
+			a.game.Tick()
+			a.redraw()
 
 		case <-a.rootCtx.Done():
 			slog.Info("main loop stopping", "reason", "root context done")
@@ -27,7 +27,7 @@ func (a *App) loop() {
 
 			case *tcell.EventResize:
 				a.screen.Sync()
-				redraw(a.screen)
+				a.redraw()
 			}
 		}
 	}

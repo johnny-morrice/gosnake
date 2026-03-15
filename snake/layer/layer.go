@@ -11,8 +11,8 @@ type Layer struct {
 }
 
 type Tile struct {
-	X         int
-	Y         int
-	Type      int
-	Character rune
+	X    int
+	Y    int
+	Type int
+	Rune rune
 }

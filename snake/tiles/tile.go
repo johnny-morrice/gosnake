@@ -1,4 +1,4 @@
-package tile
+package tiles
 
 const VerticalLine = 1
 const HorizontalLine = 2
