@@ -1,6 +1,8 @@
 package game
 
 import (
+	"slices"
+
 	"github.com/johnny-morrice/gosnake/snake/deque"
 	"github.com/johnny-morrice/gosnake/snake/layer"
 	"github.com/johnny-morrice/gosnake/snake/tiles"
@@ -36,12 +38,7 @@ func (s *Snake) EatFood(nutrition int) {
 }
 
 func (s *Snake) IsCollide(point Point) bool {
-	for _, p := range s.Deque {
-		if p == point {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(s.Deque, point)
 }
 
 func (s *Snake) Tick() {
@@ -74,9 +71,10 @@ func (s *Snake) Render() layer.Layer {
 			tileType = tiles.SnakeHead
 		}
 		myTiles[i] = layer.Tile{
-			X:    point.X,
-			Y:    point.Y,
-			Type: tileType,
+			X:     point.X,
+			Y:     point.Y,
+			Type:  tileType,
+			Color: "green",
 		}
 	}
 	return layer.Layer{

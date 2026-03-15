@@ -43,9 +43,10 @@ func (food *Food) Render() layer.Layer {
 	myTiles := make([]layer.Tile, 0, len(food.Food))
 	for point, item := range food.Food {
 		myTiles = append(myTiles, layer.Tile{
-			X:    point.X,
-			Y:    point.Y,
-			Type: item.TileType,
+			X:     point.X,
+			Y:     point.Y,
+			Type:  item.TileType,
+			Color: "red",
 		})
 	}
 	return layer.Layer{
