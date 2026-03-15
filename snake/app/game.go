@@ -7,6 +7,7 @@ type Game interface {
 	OnPressDown()
 	OnPressLeft()
 	OnPressRight()
+	OnPressRestart()
 	Tick()
 	Render() layer.Layers
 }

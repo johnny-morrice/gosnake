@@ -29,10 +29,15 @@ func (h *InputHandler) HandleEventKey(ev *tcell.EventKey) {
 		h.game.OnPressLeft()
 	case tcell.KeyRight:
 		h.game.OnPressRight()
+
 	default:
-		if ev.Str() == "q" {
+		switch ev.Str() {
+		case "q":
 			slog.Info("shutdown", "reason", "quit key")
 			h.shutdown()
+		case "r":
+			slog.Info("restart", "reason", "restart key")
+			h.game.OnPressRestart()
 		}
 	}
 }

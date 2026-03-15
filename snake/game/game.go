@@ -41,6 +41,14 @@ func New(width, height int) (*Game, error) {
 	return game, nil
 }
 
+func (g *Game) OnPressRestart() {
+	game, err := New(g.width, g.height)
+	if err != nil {
+		panic("failed to restart game: " + err.Error())
+	}
+	*g = *game
+}
+
 func (g *Game) OnPressUp() {
 	g.snake.ChangeDirection(Delta{DX: 0, DY: -1})
 }
@@ -93,7 +101,7 @@ func (g *Game) Render() layer.Layers {
 func (g *Game) backgroundLayer() layer.Layer {
 	// Lines for the game border
 	// "q for quit" hint at the bottom
-	const msg = "q: quit"
+	const msg = "q: quit r: restart"
 	myTiles := make([]layer.Tile, 0, (g.width*2)+(g.height*2)+len(msg))
 	// Corners first
 	myTiles = append(myTiles, layer.Tile{X: 0, Y: 0, Type: tiles.Corner})
