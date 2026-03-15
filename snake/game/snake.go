@@ -28,6 +28,22 @@ func NewSnake(initialPosition Point, initialDirection Delta, geometry Geometry) 
 	}
 }
 
+func (s *Snake) EatFood(nutrition int) {
+	s.Food += nutrition
+	if s.speed > 0 {
+		s.speed--
+	}
+}
+
+func (s *Snake) IsCollide(point Point) bool {
+	for _, p := range s.Deque {
+		if p == point {
+			return true
+		}
+	}
+	return false
+}
+
 func (s *Snake) Tick() {
 	if s.ticksSinceMove < s.speed {
 		s.ticksSinceMove++

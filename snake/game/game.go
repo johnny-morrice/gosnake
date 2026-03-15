@@ -2,17 +2,19 @@ package game
 
 import (
 	"errors"
+	"math/rand"
 
 	"github.com/johnny-morrice/gosnake/snake/layer"
 	"github.com/johnny-morrice/gosnake/snake/tiles"
 )
 
 type Game struct {
-	speed    int
-	width    int
-	height   int
-	geometry Geometry
-	snake    *Snake
+	width      int
+	height     int
+	geometry   Geometry
+	snake      *Snake
+	food       *Food
+	tickedOnce bool
 }
 
 func New(width, height int) (*Game, error) {
@@ -34,6 +36,7 @@ func New(width, height int) (*Game, error) {
 		height:   height,
 		geometry: geometry,
 		snake:    snake,
+		food:     NewFood(geometry),
 	}
 	return game, nil
 }
@@ -55,6 +58,21 @@ func (g *Game) OnPressRight() {
 }
 
 func (g *Game) Tick() {
+	defer func() {
+		g.tickedOnce = true
+	}()
+
+	const foodChance = 0.01
+	if !g.tickedOnce || rand.Float32() < foodChance {
+		g.food.AddFood(g.snake.Deque.Seq())
+	}
+	for point, foodItem := range g.food.Food {
+		if g.snake.IsCollide(point) {
+			g.food.Eaten(point)
+			g.snake.EatFood(foodItem.Nutrition)
+		}
+	}
+
 	g.snake.Tick()
 }
 
@@ -62,8 +80,12 @@ func (g *Game) Render() layer.Layers {
 	snakeLayer := g.snake.Render()
 	snakeLayer.OffsetX = 1
 	snakeLayer.OffsetY = 1
+	foodLayer := g.food.Render()
+	foodLayer.OffsetX = 1
+	foodLayer.OffsetY = 1
 	return layer.Layers{
 		g.backgroundLayer(),
+		foodLayer,
 		snakeLayer,
 	}
 }

@@ -17,7 +17,7 @@ type Delta struct {
 
 type Geometry interface {
 	Add(p Point, d Delta) Point
-	RandomPoint(occupied iter.Seq[Point]) Point
+	RandomPoint(occupied ...iter.Seq[Point]) Point
 }
 
 type Torus struct {
@@ -40,10 +40,12 @@ func (t Torus) Add(p Point, d Delta) Point {
 	return Point{X: x, Y: y}
 }
 
-func (t Torus) RandomPoint(occupied iter.Seq[Point]) Point {
+func (t Torus) RandomPoint(occupied ...iter.Seq[Point]) Point {
 	occupiedMap := make(map[Point]struct{})
-	for p := range occupied {
-		occupiedMap[p] = struct{}{}
+	for _, mySeq := range occupied {
+		for p := range mySeq {
+			occupiedMap[p] = struct{}{}
+		}
 	}
 
 	total := t.Width * t.Height
@@ -55,7 +57,8 @@ func (t Torus) RandomPoint(occupied iter.Seq[Point]) Point {
 	n := rand.Intn(free)
 	for i := range total {
 		p := Point{X: i % t.Width, Y: i / t.Width}
-		if _, ok := occupiedMap[p]; !ok {
+		_, isOccupied := occupiedMap[p]
+		if !isOccupied {
 			if n == 0 {
 				return p
 			}
