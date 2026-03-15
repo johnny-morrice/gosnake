@@ -21,7 +21,7 @@ func New(width, height int) (*Game, error) {
 
 	geometry := &Torus{
 		Width:  width - 2,
-		Height: height - 2,
+		Height: height - 3,
 	}
 	snake := NewSnake(
 		Point{X: geometry.Width / 2, Y: geometry.Height / 2},
@@ -50,7 +50,7 @@ func (g *Game) OnPressLeft() {
 }
 
 func (g *Game) OnPressRight() {
-	g.snake.Direction = Delta{DX: 0, DY: 1}
+	g.snake.Direction = Delta{DX: 1, DY: 0}
 }
 
 func (g *Game) Tick() {
@@ -72,13 +72,20 @@ func (g *Game) backgroundLayer() layer.Layer {
 	// "q for quit" hint at the bottom
 	const msg = "q: quit"
 	myTiles := make([]layer.Tile, 0, (g.width*2)+(g.height*2)+len(msg))
-	for x := range g.width {
+	// Corners first
+	myTiles = append(myTiles, layer.Tile{X: 0, Y: 0, Type: tiles.Corner})
+	myTiles = append(myTiles, layer.Tile{X: g.width - 1, Y: 0, Type: tiles.Corner})
+	myTiles = append(myTiles, layer.Tile{X: 0, Y: g.height - 2, Type: tiles.Corner})
+	myTiles = append(myTiles, layer.Tile{X: g.width - 1, Y: g.height - 2, Type: tiles.Corner})
+
+	// Lines next so they are under the corners
+	for x := 1; x < g.width-1; x++ {
 		myTiles = append(myTiles, layer.Tile{X: x, Y: 0, Type: tiles.HorizontalLine})
 		myTiles = append(myTiles, layer.Tile{X: x, Y: g.height - 2, Type: tiles.HorizontalLine})
 	}
-	for y := range g.height {
+	for y := 1; y < g.height-2; y++ {
 		myTiles = append(myTiles, layer.Tile{X: 0, Y: y, Type: tiles.VerticalLine})
-		myTiles = append(myTiles, layer.Tile{X: g.width - 2, Y: y, Type: tiles.VerticalLine})
+		myTiles = append(myTiles, layer.Tile{X: g.width - 1, Y: y, Type: tiles.VerticalLine})
 	}
 	for i, ch := range msg {
 		myTiles = append(myTiles, layer.Tile{X: i, Y: g.height - 1, Type: tiles.Character, Rune: ch})

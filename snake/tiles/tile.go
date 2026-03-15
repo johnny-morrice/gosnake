@@ -7,3 +7,4 @@ const SnakeBody = 4
 const SmallFood = 5
 const LargeFood = 6
 const Character = 7
+const Corner = 8

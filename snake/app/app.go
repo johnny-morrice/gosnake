@@ -47,8 +47,7 @@ func Setup() (*App, error) {
 	ticker := time.NewTicker(gameTick)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	// TODO: pass a real handler here
-	inputHandler := MakeInputHandler(cancel, nil)
+	inputHandler := MakeInputHandler(cancel, game)
 
 	return &App{
 		rootCtx:      ctx,

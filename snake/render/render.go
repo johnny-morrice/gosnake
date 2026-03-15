@@ -34,4 +34,5 @@ var tileToText = map[int]string{
 	tiles.SnakeBody:      "#",
 	tiles.SmallFood:      "o",
 	tiles.LargeFood:      "O",
+	tiles.Corner:         "+",
 }
