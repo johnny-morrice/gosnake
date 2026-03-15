@@ -3,6 +3,7 @@ package game
 import (
 	"iter"
 	"maps"
+	"math/rand"
 
 	"github.com/johnny-morrice/gosnake/snake/layer"
 	"github.com/johnny-morrice/gosnake/snake/tiles"
@@ -28,11 +29,16 @@ func NewFood(geometry Geometry) *Food {
 func (food *Food) AddFood(occupied iter.Seq[Point]) {
 	myOccupied := maps.Keys(food.Food)
 	newPoint := food.Geometry.RandomPoint(myOccupied, occupied)
-	// TODO big food.
-	food.Food[newPoint] = FoodItem{
+	// One in 10 chance of being a big food item, which gives 3 nutrition instead of 1.
+	foodItem := FoodItem{
 		Nutrition: 1,
 		TileType:  tiles.SmallFood,
 	}
+	if rand.Intn(10) == 0 {
+		foodItem.Nutrition = 3
+		foodItem.TileType = tiles.LargeFood
+	}
+	food.Food[newPoint] = foodItem
 }
 
 func (food *Food) Eaten(point Point) {

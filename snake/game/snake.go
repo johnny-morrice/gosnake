@@ -44,8 +44,13 @@ func (s *Snake) IsCollide(point Point) bool {
 
 func (s *Snake) ChangeDirection(newDirection Delta) {
 	// Don't allow reversing direction.
-	if s.Direction.DX == -newDirection.DX && s.Direction.DY == -newDirection.DY {
-		return
+	if len(s.Deque) > 1 {
+		secondSegment := s.Deque[1]
+		head := s.Deque[0]
+		nextPoint := s.Geometry.Add(head, newDirection)
+		if nextPoint == secondSegment {
+			return
+		}
 	}
 	s.Direction = newDirection
 }
